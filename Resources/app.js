@@ -79,11 +79,35 @@
 		});
 	};
 	
+	var search = Titanium.UI.createSearchBar(
+	{
+		barColor:'#385292',
+		showCancel:false,
+		hintText:'search'
+	});
+	
+	search.addEventListener('change', function(e)
+	{
+		e.value; // search string as user types
+	});
+	
+	search.addEventListener('return', function(e)
+	{
+		search.blur();
+	});
+	
+		search.addEventListener('cancel', function(e)
+	{
+		search.blur();
+	});
+	
 	function tableviewAdder(data, callback)
 	{
 		// create table view
 		var tableview = Titanium.UI.createTableView({
-			data:data
+			data:data,
+			search:search,
+			searchHidden:true
 		});
 		
 		callback(tableview);
@@ -102,7 +126,7 @@
 			    latitude:stops[i].latitude,
 			    longitude:stops[i].longitude,
 			    title:stops[i].display_name,
-			    subtitle:'Click here to see local events in the area!/nPowered by Rewire Web',
+			    subtitle:'Click here to see local events in the area! Powered by Rewire Web',
 			    pincolor:Titanium.Map.ANNOTATION_RED,
 			    animate:true,
 			    leftButton: 'android/appicon.png',

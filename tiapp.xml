@@ -7,11 +7,11 @@
         <target device="android">true</target>
         <target device="blackberry">false</target>
     </deployment-targets>
-    <id>com.rewireweb.metromobile</id>
-    <name>Metro Mobile App</name>
+    <id>com.rewireweb.metrolicious</id>
+    <name>Metrolicious</name>
     <version>1.0</version>
     <publisher>Rewire Web</publisher>
-    <url>http://www.rewireweb.com/metromobile</url>
+    <url>http://www.rewireweb.com/</url>
     <description>Rewire Web's entry for the Metro Challenge - Mobile App category. </description>
     <copyright>2011 by Rewire Web</copyright>
     <icon>appicon.png</icon>
