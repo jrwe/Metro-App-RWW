@@ -11,22 +11,59 @@
 	};
 	
 	var xhr = Titanium.Network.createHTTPClient();
+	
+	var win1;
 	var win2;
+	var eventsWin;
+	var loadingWin;
+	
 	var curRoute;
 	var curAnnotation;
 	var curEvent;
+	
+	var loadingMessage = Titanium.UI.createLabel(
+	{
+		id:'loadingMessage',
+		text:'Please hold on... loading next screen. Like waiting for the bus! :)',
+		width:200,
+		height:150,
+		top:10,
+		color:'#000',
+		textAlign:'center'
+	});
+	
+	var activeTable;
+	var activeMap;
+	
 	
 	var init = function()
 	{
 		// this sets the background color of the master UIView (when there are no windows/tab groups on it)
 		Titanium.UI.setBackgroundColor('#000');
 		
+		win1 = Titanium.UI.createWindow({  
+		    title:'Metrolicious',
+		    backgroundColor:'#fff',
+		    exitOnClose: true
+		});
+		
 		win2 = Titanium.UI.createWindow({  
-		    title:'Metro Mobile App',
+		    title:'Metrolicious',
 		    backgroundColor:'#fff'
 		});
 		
-		win2.open({fullscreen:false});
+		eventsWin = Titanium.UI.createWindow({  
+		    title:'Metrolicious',
+		    backgroundColor:'#fff'
+		});
+		
+		loadingWin = Titanium.UI.createWindow({  
+		    title:'Metrolicious',
+		    backgroundColor:'#fff'
+		});
+		
+		
+		win1.open({fullscreen:false});
 		
 		xhr.onerror = function(e)
 		{
@@ -61,22 +98,25 @@
 			});
 		}
 		
-		tableviewAdder(data, function(tableview)
+		var routesTable = tableviewAdder(data);
+		
+		// create table view event listener
+		routesTable.addEventListener('click', function(e)
 		{
-			// create table view event listener
-			tableview.addEventListener('click', function(e)
-			{
-				curRoute = e.rowData;
-				var ep = config.endpoints;
-				var re = /{id}/gi;
-				
-				var endpoint = ep.baseurl + ep.stops.replace(re, curRoute.id);
-				jsonGettr(onLoad_stops, endpoint);			
-			});
+			//win1.remove(activeTable);
+			loadingWin.open();
+			loadingWin.add(loadingMessage);
 			
-			// win2.add(label2);
-			win2.add(tableview);
+			curRoute = e.rowData;
+			var ep = config.endpoints;
+			var re = /{id}/gi;
+			
+			var endpoint = ep.baseurl + ep.stops.replace(re, curRoute.id);
+			jsonGettr(onLoad_stops, endpoint);			
 		});
+		
+		activeTable = routesTable;
+		win1.add(activeTable);
 	};
 	
 	var search = Titanium.UI.createSearchBar(
@@ -96,12 +136,12 @@
 		search.blur();
 	});
 	
-		search.addEventListener('cancel', function(e)
+	search.addEventListener('cancel', function(e)
 	{
 		search.blur();
 	});
 	
-	function tableviewAdder(data, callback)
+	function tableviewAdder(data)
 	{
 		// create table view
 		var tableview = Titanium.UI.createTableView({
@@ -110,7 +150,7 @@
 			searchHidden:true
 		});
 		
-		callback(tableview);
+		return tableview;
 	};
 	
 	function onLoad_stops()
@@ -133,9 +173,9 @@
 			});
 			
 			stopsArray.push(annotation);
-			
-			mapViewr(stopsArray);
 		}
+		
+		mapViewr(stopsArray);
 	};
 			
 	
@@ -146,9 +186,8 @@
 		
 		var la2 = stopsArray[stopsArray.length-1].latitude;
 		var lo2 = stopsArray[stopsArray.length-1].longitude;
-		
-		
-		var mapview = Titanium.Map.createView(
+				
+		var stopsMap = Titanium.Map.createView(
 		{
 		    mapType: Titanium.Map.STANDARD_TYPE,
 		    region: {
@@ -161,8 +200,8 @@
 		    annotations:stopsArray
 		});
 		
-		mapview.addEventListener('click', function(e)
-		{						
+		stopsMap.addEventListener('click', function(e)
+		{
 			curAnnotation = e.annotation;
 			var curLocation = String(curAnnotation.latitude + ',' + curAnnotation.longitude);
 			var ep = config.endpoints;
@@ -174,41 +213,65 @@
 			jsonGettr(onLoad_eventful, endpoint);			
 		});
 		
-		var x = 5;
-		// win2.remove(tableview);
-		//win2.add(mapview);
+		activeMap = stopsMap;
+		
+		//TODO: create loading / unloading module
+		loadingWin.remove(loadingMessage);
+
+		win2.open();
+		win2.add(activeMap);
 	};
 	
 	function onLoad_eventful()
 	{
 		var json = JSON.parse(this.responseText);
 		
+		/*
 		// create table view data object
 		var data = [];
-		var events = json.events.event;
+		var events = json.events['event'];
 		
-		for(var i = 0; i < events.length; i++)
+		if(events.length)
+		{
+			for(var i = 0; i < events.length; i++)
+			{
+				data.push({
+					title: events[i].title
+					// latitude: events[i].latitude,
+					// longitude: events[i].longitude
+				});
+				
+				data = [{
+					title: 'TESTING MEMORY SIZE FOR TABLES'
+				}];
+			};
+		}
+		else
 		{
 			data.push({
-				title: events[i].title,
-				latitude: events[i].latitude,
-				longitude: events[i].longitude
+				title: 'No events within 1 mile! SORRY.'
 			});
 		}
+		*/
+		data = [{
+				title: 'No events within 1 mile! SORRY.'
+			}];
 		
-		tableviewAdder(data, function(tableview)
+		var eventsTable = tableviewAdder(data);
+		
+		// create table view event listener
+		eventsTable.addEventListener('click', function(e)
 		{
-			// create table view event listener
-			tableview.addEventListener('click', function(e)
-			{
-				curEvent = e.rowData;
-			});
-			
-			// win2.add(label2);
-			win2.add(tableview);
+			curEvent = e.rowData;
 		});
-	}
-	
+		
+		activeTable = eventsTable;
+		
+		//win2.close();
+		eventsWin.open();
+		eventsWin.add(activeTable);
+		var x = 5;
+	};
 	
 	init();
 })();
