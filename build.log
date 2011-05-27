@@ -1,0 +1,31 @@
+Logfile initialized
+[INFO] logfile = /home/jrw/public_html/Metrolicious/build.log
+[DEBUG] /home/jrw/.titanium/mobilesdk/linux/1.7.0/android/builder.py simulator Metrolicious /home/jrw/Downloads/android-sdk-linux_x86 /home/jrw/public_html/Metrolicious com.rewireweb.metrolicious 6 WQVGA400 192.168.122.1:54372
+[INFO] Building Metrolicious for Android ... one moment
+[INFO] Titanium SDK version: 1.7.0 (05/25/11 16:13 364c307...)
+[DEBUG] Waiting for device to be ready ...
+[TRACE] adb devices returned 1 devices/emulators
+[DEBUG] Device connected... (waited 0 seconds)
+[DEBUG] waited 0.010126 seconds on emulator to get ready
+[DEBUG] com.rewireweb.metrolicious installed? True
+[INFO] Fastdev server running, deploying in Fastdev mode
+[INFO] Copying project resources..
+[TRACE] COPYING MODIFIED FILE: /home/jrw/public_html/Metrolicious/Resources/app.js => /home/jrw/public_html/Metrolicious/build/android/bin/assets/Resources/app.js
+[INFO] Tiapp.xml unchanged, skipping class generation
+[DEBUG] Processing Android resource drawables
+[DEBUG] found drawable-notlong-land-ldpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-notlong-land-ldpi/default.png
+[DEBUG] found drawable-long-land-ldpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-long-land-ldpi/default.png
+[DEBUG] found drawable-notlong-port-mdpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-notlong-port-mdpi/default.png
+[DEBUG] found drawable-notlong-port-ldpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-notlong-port-ldpi/default.png
+[DEBUG] found drawable-notlong-land-mdpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-notlong-land-mdpi/default.png
+[DEBUG] found drawable-long-land-hdpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-long-land-hdpi/default.png
+[DEBUG] found drawable-long-port-ldpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-long-port-ldpi/default.png
+[DEBUG] found drawable-notlong-port-hdpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-notlong-port-hdpi/default.png
+[DEBUG] found drawable-long-port-hdpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-long-port-hdpi/default.png
+[DEBUG] found drawable-notlong-land-hdpi splash screen at /home/jrw/public_html/Metrolicious/Resources/android/images/res-notlong-land-hdpi/default.png
+[INFO] Waiting for SDCard to become available..
+[INFO] Re-launching application ... Metrolicious
+[INFO] Launching application ... Metrolicious
+[TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.rewireweb.metrolicious/.MetroliciousActivity }
+Warning: Activity not started, its current task has been brought to the front
+

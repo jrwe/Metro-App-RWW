@@ -1,5 +1,5 @@
 (function()
-{
+{	
 	var config = 
 	{
 		endpoints: {
@@ -24,7 +24,7 @@
 	var loadingMessage = Titanium.UI.createLabel(
 	{
 		id:'loadingMessage',
-		text:'Please hold on... loading next screen. Like waiting for the bus! :)',
+		text:'Please hold on... loading... Like waiting for the bus! :)',
 		width:200,
 		height:150,
 		top:10,
@@ -48,17 +48,18 @@
 		});
 		
 		win2 = Titanium.UI.createWindow({  
-		    title:'Metrolicious',
+		    title:'Metrolicious - Win 2',
 		    backgroundColor:'#fff'
 		});
 		
 		eventsWin = Titanium.UI.createWindow({  
-		    title:'Metrolicious',
-		    backgroundColor:'#fff'
+		    title:'Metrolicious - Events',
+		    backgroundColor:'pink',
+		    url:'eventsTable.js'
 		});
 		
 		loadingWin = Titanium.UI.createWindow({  
-		    title:'Metrolicious',
+		    title:'Metrolicious - Loading ...',
 		    backgroundColor:'#fff'
 		});
 		
@@ -68,7 +69,7 @@
 		xhr.onerror = function(e)
 		{
 			var x = 5;
-			//	l2.text = e.error;
+			//	l2.text = e.error;	
 		};
 		
 		var ep = config.endpoints;
@@ -122,8 +123,8 @@
 	var search = Titanium.UI.createSearchBar(
 	{
 		barColor:'#385292',
-		showCancel:false,
-		hintText:'search'
+		showCancel:true,
+		hintText:'Which route are you taking?'
 	});
 	
 	search.addEventListener('change', function(e)
@@ -210,7 +211,8 @@
 
 			var endpoint = ep.eventful.replace(re1, 'events');
 			endpoint = endpoint.replace(re2, curLocation);
-			jsonGettr(onLoad_eventful, endpoint);			
+			eventsWin.ep = endpoint;
+			jsonGettr(eventsWin.onLoad_eventful, eventsWin.ep);			
 		});
 		
 		activeMap = stopsMap;
@@ -220,57 +222,6 @@
 
 		win2.open();
 		win2.add(activeMap);
-	};
-	
-	function onLoad_eventful()
-	{
-		var json = JSON.parse(this.responseText);
-		
-		/*
-		// create table view data object
-		var data = [];
-		var events = json.events['event'];
-		
-		if(events.length)
-		{
-			for(var i = 0; i < events.length; i++)
-			{
-				data.push({
-					title: events[i].title
-					// latitude: events[i].latitude,
-					// longitude: events[i].longitude
-				});
-				
-				data = [{
-					title: 'TESTING MEMORY SIZE FOR TABLES'
-				}];
-			};
-		}
-		else
-		{
-			data.push({
-				title: 'No events within 1 mile! SORRY.'
-			});
-		}
-		*/
-		data = [{
-				title: 'No events within 1 mile! SORRY.'
-			}];
-		
-		var eventsTable = tableviewAdder(data);
-		
-		// create table view event listener
-		eventsTable.addEventListener('click', function(e)
-		{
-			curEvent = e.rowData;
-		});
-		
-		activeTable = eventsTable;
-		
-		//win2.close();
-		eventsWin.open();
-		eventsWin.add(activeTable);
-		var x = 5;
 	};
 	
 	init();
