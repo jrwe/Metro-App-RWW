@@ -54,18 +54,15 @@
 		
 		eventsWin = Titanium.UI.createWindow({  
 		    title:'Metrolicious - Events',
-		    backgroundColor:'pink',
-		    url:'eventsTable.js'
+		    backgroundColor:'pink'
+		    //url:'eventsTable.js'
 		});
 		
 		loadingWin = Titanium.UI.createWindow({  
 		    title:'Metrolicious - Loading ...',
 		    backgroundColor:'#fff'
 		});
-		
-		
-		win1.open({fullscreen:false});
-		
+				
 		xhr.onerror = function(e)
 		{
 			var x = 5;
@@ -74,6 +71,8 @@
 		
 		var ep = config.endpoints;
 		jsonGettr(onLoad_routes, ep.baseurl + ep.routes);
+		
+		win1.open({fullscreen:false});
 	}
 	
 	var jsonGettr = function(callback, url)
@@ -113,6 +112,7 @@
 			var re = /{id}/gi;
 			
 			var endpoint = ep.baseurl + ep.stops.replace(re, curRoute.id);
+			win1.remove(activeTable);
 			jsonGettr(onLoad_stops, endpoint);			
 		});
 		
@@ -167,7 +167,7 @@
 			    latitude:stops[i].latitude,
 			    longitude:stops[i].longitude,
 			    title:stops[i].display_name,
-			    subtitle:'Click here to see local events in the area! Powered by Rewire Web',
+			    subtitle:'Click here to see local events in the area!',
 			    pincolor:Titanium.Map.ANNOTATION_RED,
 			    animate:true,
 			    leftButton: 'android/appicon.png',
@@ -211,8 +211,9 @@
 
 			var endpoint = ep.eventful.replace(re1, 'events');
 			endpoint = endpoint.replace(re2, curLocation);
-			eventsWin.ep = endpoint;
-			jsonGettr(eventsWin.onLoad_eventful, eventsWin.ep);			
+			ep = endpoint;
+			win2.remove(activeMap);
+			jsonGettr(onLoad_eventful, ep);
 		});
 		
 		activeMap = stopsMap;
@@ -222,6 +223,50 @@
 
 		win2.open();
 		win2.add(activeMap);
+	};
+	
+	function onLoad_eventful()
+	{
+		Ti.API.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		Ti.API.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+		var json = JSON.parse(this.responseText);
+		
+		// create table view data object
+		var data = [];
+		var events = json.events['event'];
+		
+		if(events.length)
+		{
+			for(var i = 0; i < events.length; i++)
+			{
+				data.push({
+					title: events[i].title
+					// latitude: events[i].latitude,
+					// longitude: events[i].longitude
+				});
+			};
+		}
+		else
+		{
+			data.push({
+				title: 'No events within 1 mile! SORRY.'
+			});
+		}
+		
+		var eventsTable = tableviewAdder(data);
+		
+		// create table view event listener
+		eventsTable.addEventListener('click', function(e)
+		{
+			curEvent = e.rowData;
+		});
+		
+		activeTable = eventsTable;
+		
+		//win2.close();
+		eventsWin.open();
+		eventsWin.add(activeTable);
 	};
 	
 	init();
