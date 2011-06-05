@@ -124,7 +124,7 @@
 	{
 		barColor:'#385292',
 		showCancel:true,
-		hintText:'Which route are you taking?'
+		hintText:'Which bus are you taking?'
 	});
 	
 	search.addEventListener('change', function(e)
@@ -146,9 +146,9 @@
 	{
 		// create table view
 		var tableview = Titanium.UI.createTableView({
-			data:data,
-			search:search,
-			searchHidden:true
+			data:data
+			//search:search
+			//searchHidden:true
 		});
 		
 		return tableview;
@@ -227,14 +227,15 @@
 	
 	function onLoad_eventful()
 	{
-		Ti.API.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		Ti.API.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
 		var json = JSON.parse(this.responseText);
 		
 		// create table view data object
 		var data = [];
 		var events = json.events['event'];
+		
+		Ti.API.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		Ti.API.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		Ti.API.info(events);
 		
 		if(events.length)
 		{
@@ -242,8 +243,6 @@
 			{
 				data.push({
 					title: events[i].title
-					// latitude: events[i].latitude,
-					// longitude: events[i].longitude
 				});
 			};
 		}
