@@ -6,7 +6,7 @@ Logfile initialized
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.007524 seconds on emulator to get ready
+[DEBUG] waited 0.007661 seconds on emulator to get ready
 [DEBUG] com.rewireweb.metrolicious installed? True
 [INFO] Fastdev server running, deploying in Fastdev mode
 [INFO] Copying project resources..
@@ -28,4 +28,3 @@ Logfile initialized
 [INFO] Launching application ... Metrolicious
 [TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.rewireweb.metrolicious/.MetroliciousActivity }
 
-[INFO] Relaunched Metrolicious ... Application should be running.

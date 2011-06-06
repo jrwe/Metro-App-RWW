@@ -120,35 +120,48 @@
 		win1.add(activeTable);
 	};
 	
-	var search = Titanium.UI.createSearchBar(
-	{
-		barColor:'#385292',
-		showCancel:true,
-		hintText:'Which bus are you taking?'
-	});
+	var searchCtr;
 	
-	search.addEventListener('change', function(e)
-	{
-		e.value; // search string as user types
-	});
+		var search = Titanium.UI.createSearchBar(
+		{
+			barColor:'#385292',
+			showCancel:true,
+			hintText:'Which bus are you taking?'
+		});
 	
-	search.addEventListener('return', function(e)
-	{
-		search.blur();
-	});
-	
-	search.addEventListener('cancel', function(e)
-	{
-		search.blur();
-	});
+		search.addEventListener('change', function(e)
+		{
+			e.value; // search string as user types
+		});
+		
+		search.addEventListener('return', function(e)
+		{
+			search.blur();
+		});
+		
+		search.addEventListener('cancel', function(e)
+		{
+			search.blur();
+		});
+		
 	
 	function tableviewAdder(data)
 	{
+		if(searchCtr == 1)
+		{
+			Titanium.UI.TableView.remove(search);
+		}
+		else
+		{
+			searchCtr = 1;
+		};
+		
+		
 		// create table view
 		var tableview = Titanium.UI.createTableView({
-			data:data
-			//search:search
-			//searchHidden:true
+			data:data,
+			search:search,
+			searchHidden:true
 		});
 		
 		return tableview;
