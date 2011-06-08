@@ -43,24 +43,24 @@
 		
 		win1 = Titanium.UI.createWindow({  
 		    title:'Metrolicious',
-		    backgroundColor:'#fff',
+		    backgroundColor:'black',
 		    exitOnClose: true
 		});
 		
 		win2 = Titanium.UI.createWindow({  
 		    title:'Metrolicious - Win 2',
-		    backgroundColor:'#fff'
+		    backgroundColor:'black'
 		});
 		
 		eventsWin = Titanium.UI.createWindow({  
 		    title:'Metrolicious - Events',
-		    backgroundColor:'pink'
+		    backgroundColor:'black'
 		    //url:'eventsTable.js'
 		});
 		
 		loadingWin = Titanium.UI.createWindow({  
 		    title:'Metrolicious - Loading ...',
-		    backgroundColor:'#fff'
+		    backgroundColor:'white'
 		});
 				
 		xhr.onerror = function(e)
@@ -149,20 +149,24 @@
 	{
 		if(searchCtr == 1)
 		{
-			Titanium.UI.TableView.remove(search);
+			var tableview = Titanium.UI.createTableView(
+			{
+				data:data
+			});
 		}
 		else
 		{
 			searchCtr = 1;
-		};
-		
-		
-		// create table view
-		var tableview = Titanium.UI.createTableView({
+			var tableview = Titanium.UI.createTableView({
 			data:data,
 			search:search,
 			searchHidden:true
 		});
+		};
+		
+		
+		// create table view
+		
 		
 		return tableview;
 	};
