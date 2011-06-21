@@ -9,18 +9,22 @@
 			eventful: 'http://api.eventful.com/json/events/search?keywords={keywords}&location={location}&app_key=4jSM4wsC3xQDkwZV&within=1'
 		}
 	};
-	
+
 	var xhr = Titanium.Network.createHTTPClient();
-	
+
 	var win1;
-	var win2;
 	var eventsWin;
 	var loadingWin;
-	
+
 	var curRoute;
 	var curAnnotation;
 	var curEvent;
+
+	var searchCtr;
 	
+	var stopsArray = [];
+	
+
 	var loadingMessage = Titanium.UI.createLabel(
 	{
 		id:'loadingMessage',
@@ -31,11 +35,11 @@
 		color:'#000',
 		textAlign:'center'
 	});
-	
+
 	var activeTable;
 	var activeMap;
-	
-	
+
+
 	var init = function()
 	{
 		// this sets the background color of the master UIView (when there are no windows/tab groups on it)
@@ -46,50 +50,46 @@
 		    backgroundColor:'black',
 		    exitOnClose: true
 		});
-		
-		win2 = Titanium.UI.createWindow({  
-		    title:'Metrolicious - Win 2',
-		    backgroundColor:'black'
-		});
-		
+
 		eventsWin = Titanium.UI.createWindow({  
-		    title:'Metrolicious - Events',
-		    backgroundColor:'black'
+		    title:'Metrolicious: Events around your stop',
+		    backgroundColor:'black',
+			fullscreen:false
 		    //url:'eventsTable.js'
 		});
-		
+
 		loadingWin = Titanium.UI.createWindow({  
 		    title:'Metrolicious - Loading ...',
 		    backgroundColor:'white'
 		});
-				
+
 		xhr.onerror = function(e)
 		{
 			var x = 5;
 			//	l2.text = e.error;	
 		};
-		
+
 		var ep = config.endpoints;
 		jsonGettr(onLoad_routes, ep.baseurl + ep.routes);
 		
 		win1.open({fullscreen:false});
 	}
-	
+
 	var jsonGettr = function(callback, url)
 	{
 		xhr.onload = callback;
 		xhr.open('GET', url);
 		xhr.send();
 	};
-	
+
 	function onLoad_routes()
 	{
 		var json = JSON.parse(this.responseText);
-		
+
 		// create table view data object
 		var data = [];
 		var routes = json.items;
-		
+
 		for(var i = 0; i < routes.length; i++)
 		{
 			data.push({
@@ -97,9 +97,9 @@
 				id: routes[i].id 
 			});
 		}
-		
+
 		var routesTable = tableviewAdder(data);
-		
+
 		// create table view event listener
 		routesTable.addEventListener('click', function(e)
 		{
@@ -112,44 +112,42 @@
 			var re = /{id}/gi;
 			
 			var endpoint = ep.baseurl + ep.stops.replace(re, curRoute.id);
-			win1.remove(activeTable);
+			//win1.remove(activeTable);
 			jsonGettr(onLoad_stops, endpoint);			
 		});
-		
+
 		activeTable = routesTable;
 		win1.add(activeTable);
 	};
+
+	var search = Titanium.UI.createSearchBar(
+	{
+		barColor:'#385292',
+		showCancel:true,
+		hintText:'Which bus are you taking?'
+	});
+
+	search.addEventListener('change', function(e)
+	{
+		e.value; // search string as user types
+	});
+
+	search.addEventListener('return', function(e)
+	{
+		search.blur();
+	});
 	
-	var searchCtr;
-	
-		var search = Titanium.UI.createSearchBar(
-		{
-			barColor:'#385292',
-			showCancel:true,
-			hintText:'Which bus are you taking?'
-		});
-	
-		search.addEventListener('change', function(e)
-		{
-			e.value; // search string as user types
-		});
-		
-		search.addEventListener('return', function(e)
-		{
-			search.blur();
-		});
-		
-		search.addEventListener('cancel', function(e)
-		{
-			search.blur();
-		});
-		
-	
+	search.addEventListener('cancel', function(e)
+	{
+		search.blur();
+	});
+
+
 	function tableviewAdder(data)
 	{
 		if(searchCtr == 1)
 		{
-			var tableview = Titanium.UI.createTableView(
+			tableview = Titanium.UI.createTableView(
 			{
 				data:data
 			});
@@ -164,17 +162,12 @@
 		});
 		};
 		
-		
-		// create table view
-		
-		
 		return tableview;
 	};
 	
 	function onLoad_stops()
 	{
 		var json = JSON.parse(this.responseText);
-		var stopsArray = [];
 		var stops = json.items;
 		
 		for(var i = 0; i < json.items.length; i++)
@@ -193,54 +186,12 @@
 			stopsArray.push(annotation);
 		}
 		
-		mapViewr(stopsArray);
+		mapsWin.open();
+		// mapsWin.mapViewr(stopsArray);
+		mapsWin.stopsArray = stopsArray;
+		mapsWin.fireEvent('mapViewr');
 	};
-			
 	
-	function mapViewr(stopsArray)
-	{
-		var la1 = stopsArray[0].latitude;
-		var lo1 = stopsArray[0].longitude;
-		
-		var la2 = stopsArray[stopsArray.length-1].latitude;
-		var lo2 = stopsArray[stopsArray.length-1].longitude;
-				
-		var stopsMap = Titanium.Map.createView(
-		{
-		    mapType: Titanium.Map.STANDARD_TYPE,
-		    region: {
-		    	latitude:la1, longitude:lo1, 
-		        latitudeDelta:Math.abs(la1 - la2), longitudeDelta:Math.abs(lo1 - lo2)
-		    },
-		    animate:true,
-		    regionFit:true,
-		    userLocation:true,
-		    annotations:stopsArray
-		});
-		
-		stopsMap.addEventListener('click', function(e)
-		{
-			curAnnotation = e.annotation;
-			var curLocation = String(curAnnotation.latitude + ',' + curAnnotation.longitude);
-			var ep = config.endpoints;
-			var re1 = /{keywords}/gi;
-			var re2 = /{location}/gi;
-
-			var endpoint = ep.eventful.replace(re1, 'events');
-			endpoint = endpoint.replace(re2, curLocation);
-			ep = endpoint;
-			win2.remove(activeMap);
-			jsonGettr(onLoad_eventful, ep);
-		});
-		
-		activeMap = stopsMap;
-		
-		//TODO: create loading / unloading module
-		loadingWin.remove(loadingMessage);
-
-		win2.open();
-		win2.add(activeMap);
-	};
 	
 	function onLoad_eventful()
 	{
@@ -248,12 +199,11 @@
 		
 		// create table view data object
 		var data = [];
+		
+		if(json.events == null){}
+		
 		var events = json.events['event'];
-		
-		Ti.API.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		Ti.API.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		Ti.API.info(events);
-		
+
 		if(events.length)
 		{
 			for(var i = 0; i < events.length; i++)
@@ -280,7 +230,7 @@
 		
 		activeTable = eventsTable;
 		
-		//win2.close();
+		//mapsWin.close();
 		eventsWin.open();
 		eventsWin.add(activeTable);
 	};
